@@ -23,7 +23,7 @@ String selectedStatus = 'pending';
 Future saveTask() async {
 
 final response = await http.post(
-  Uri.parse('http://192.168.1.8:8000/api/tasks'),
+  Uri.parse('http://192.168.1.3:8000/api/tasks'),
   body: {
   'title': titleController.text,
   'course': courseController.text,
@@ -32,7 +32,8 @@ final response = await http.post(
   'status': selectedStatus,
 },
 );
-
+print(response.statusCode);
+print(response.body);
 if(response.statusCode == 200 ||
     response.statusCode == 201){
 
