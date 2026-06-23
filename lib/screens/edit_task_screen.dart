@@ -22,6 +22,8 @@ class _EditTaskScreenState
   late TextEditingController course;
   late TextEditingController deadline;
 
+  String selectedStatus = 'pending';
+
   @override
   void initState() {
     super.initState();
@@ -37,12 +39,14 @@ class _EditTaskScreenState
     deadline = TextEditingController(
       text: widget.task.deadline,
     );
+
+    selectedStatus = widget.task.status;
   }
 
   InputDecoration fieldStyle(
-      String label,
-      IconData icon) {
-
+    String label,
+    IconData icon,
+  ) {
     return InputDecoration(
       labelText: label,
 
@@ -140,42 +144,96 @@ class _EditTaskScreenState
               const SizedBox(height: 15),
 
               TextField(
-  controller: deadline,
+                controller: deadline,
 
-  readOnly: true,
+                readOnly: true,
 
-  style: const TextStyle(
-    color: Colors.white,
-  ),
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
 
-  onTap: () async {
+                onTap: () async {
 
-    DateTime? picked =
-        await showDatePicker(
+                  DateTime? picked =
+                      await showDatePicker(
 
-      context: context,
+                    context: context,
 
-      initialDate: DateTime.now(),
+                    initialDate:
+                        DateTime.now(),
 
-      firstDate: DateTime(2024),
+                    firstDate:
+                        DateTime(2024),
 
-      lastDate: DateTime(2030),
+                    lastDate:
+                        DateTime(2030),
 
-    );
+                  );
 
-    if (picked != null) {
+                  if (picked != null) {
 
-      deadline.text =
-          picked.toString().split(' ')[0];
+                    deadline.text =
+                        picked
+                            .toString()
+                            .split(' ')[0];
 
-    }
-  },
+                  }
 
-  decoration: fieldStyle(
-    "Deadline",
-    Icons.calendar_month,
-  ),
-),
+                },
+
+                decoration: fieldStyle(
+                  "Deadline",
+                  Icons.calendar_month,
+                ),
+              ),
+
+              const SizedBox(height: 15),
+
+              DropdownButtonFormField<String>(
+                value: selectedStatus,
+
+                dropdownColor:
+                    const Color(
+                        0xff1E293B),
+
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+
+                decoration: fieldStyle(
+                  "Status",
+                  Icons.flag,
+                ),
+
+                items: const [
+
+                  DropdownMenuItem(
+                    value: 'pending',
+                    child: Text(
+                      'Pending',
+                    ),
+                  ),
+
+                  DropdownMenuItem(
+                    value: 'selesai',
+                    child: Text(
+                      'Selesai',
+                    ),
+                  ),
+
+                ],
+
+                onChanged: (value) {
+
+                  setState(() {
+
+                    selectedStatus =
+                        value!;
+
+                  });
+
+                },
+              ),
 
               const SizedBox(height: 25),
 
@@ -202,10 +260,17 @@ class _EditTaskScreenState
 
                     await ApiService()
                         .updateTask(
+
                       widget.task.id,
+
                       title.text,
+
                       course.text,
+
                       deadline.text,
+
+                      selectedStatus,
+
                     );
 
                     if (mounted) {

@@ -5,7 +5,7 @@ import '../models/task.dart';
 class ApiService {
 
   static const String baseUrl =
-      'http://192.168.1.8:8000/api/tasks';
+      'http://192.168.1.3:8000/api/tasks';
 
   Future<List<Task>> getTasks() async {
 
@@ -42,34 +42,36 @@ class ApiService {
     }
   }
 
-  Future<void> updateTask(
-    int id,
-    String title,
-    String course,
-    String deadline,
-  ) async {
+ Future<void> updateTask(
+int id,
+String title,
+String course,
+String deadline,
+String status,
+) async {
 
-    final response =
-        await http.put(
+final response =
+await http.put(
 
-      Uri.parse('$baseUrl/$id'),
+Uri.parse('$baseUrl/$id'),
 
-      body: {
+body: {
 
-        'title': title,
-        'course': course,
-        'deadline': deadline,
-        'status': 'pending',
+  'title': title,
+  'course': course,
+  'deadline': deadline,
+  'status': status,
 
-      },
-    );
+},
 
-    if (response.statusCode != 200) {
+);
 
-      throw Exception(
-        'Gagal update tugas',
-      );
+if (response.statusCode != 200) {
 
-    }
-  }
+throw Exception(
+  'Gagal update tugas',
+);
+
+}
+}
 }

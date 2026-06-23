@@ -3,6 +3,8 @@ import '../models/task.dart';
 import '../services/api_service.dart';
 import 'add_task_screen.dart';
 import 'edit_task_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'login_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -13,12 +15,28 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   late Future<List<Task>> tasks;
+  String userName = "Setiyo";
+Future<void> loadUser() async {
 
-  @override
-  void initState() {
-    super.initState();
-    tasks = ApiService().getTasks();
-  }
+  final prefs =
+      await SharedPreferences.getInstance();
+
+  setState(() {
+
+    userName =
+        prefs.getString('userName') ??
+        "Setiyo";
+
+  });
+}
+ @override
+void initState() {
+  super.initState();
+
+  tasks = ApiService().getTasks();
+
+  loadUser();
+}
 
   void refreshTasks() {
     setState(() {
@@ -48,14 +66,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
         },
       ),
 
-      appBar: AppBar(
-        backgroundColor: const Color(0xff0F172A),
-        elevation: 0,
-        title: const Text(
-          "Manajemen Tugas Kuliah",
-          style: TextStyle(color: Colors.white),
-        ),
+     appBar: AppBar(
+  backgroundColor: const Color(0xff0F172A),
+  elevation: 0,
+
+  title: const Text(
+    "Manajemen Tugas Kuliah",
+    style: TextStyle(
+      color: Colors.white,
+    ),
+  ),
+
+  actions: [
+
+    IconButton(
+
+      icon: const Icon(
+        Icons.logout,
+        color: Colors.white,
       ),
+
+      onPressed: () async {
+
+        final prefs =
+            await SharedPreferences.getInstance();
+
+        await prefs.clear();
+
+        if(mounted){
+
+          Navigator.pushAndRemoveUntil(
+
+            context,
+
+            MaterialPageRoute(
+              builder: (_) =>
+                  const LoginScreen(),
+            ),
+
+            (route) => false,
+
+          );
+
+        }
+
+      },
+    ),
+
+  ],
+      ),
+      
 
       body: FutureBuilder<List<Task>>(
         future: tasks,
@@ -103,8 +163,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               children: [
 
-                const Text(
-                  "Halo Setiyo 👋",
+                Text(
+  "Halo $userName 👋",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,

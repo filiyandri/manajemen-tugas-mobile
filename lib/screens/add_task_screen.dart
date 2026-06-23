@@ -17,17 +17,20 @@ final titleController = TextEditingController();
 final courseController = TextEditingController();
 final deadlineController = TextEditingController();
 final descriptionController = TextEditingController();
+String selectedStatus = 'pending';
+
 
 Future saveTask() async {
 
 final response = await http.post(
   Uri.parse('http://192.168.1.8:8000/api/tasks'),
   body: {
-    'title': titleController.text,
-    'course': courseController.text,
-    'deadline': deadlineController.text,
-    'description': descriptionController.text,
-  },
+  'title': titleController.text,
+  'course': courseController.text,
+  'deadline': deadlineController.text,
+  'description': descriptionController.text,
+  'status': selectedStatus,
+},
 );
 
 if(response.statusCode == 200 ||
@@ -130,7 +133,7 @@ return Scaffold(
                 ),
               ),
 
-              const SizedBox(height: 15),
+              const SizedBox(height: 15),   
 
               TextField(
                 controller:
@@ -186,23 +189,64 @@ return Scaffold(
   ),
 ),
 
-              const SizedBox(height: 15),
+              DropdownButtonFormField<String>(
+value: selectedStatus,
 
-              TextField(
-                controller:
-                    descriptionController,
+dropdownColor: const Color(0xff1E293B),
 
-                maxLines: 3,
+style: const TextStyle(
+color: Colors.white,
+),
 
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
+decoration: fieldStyle(
+"Status",
+Icons.flag,
+),
 
-                decoration: fieldStyle(
-                  "Deskripsi",
-                  Icons.description,
-                ),
-              ),
+items: const [
+
+DropdownMenuItem(
+  value: 'pending',
+  child: Text('Pending'),
+),
+
+DropdownMenuItem(
+  value: 'selesai',
+  child: Text('Selesai'),
+),
+
+],
+
+onChanged: (value) {
+
+setState(() {
+
+  selectedStatus = value!;
+
+});
+
+},
+
+),
+
+const SizedBox(height: 15),
+
+TextField(
+controller:
+descriptionController,
+
+maxLines: 3,
+
+style: const TextStyle(
+color: Colors.white,
+),
+
+decoration: fieldStyle(
+"Deskripsi",
+Icons.description,
+),
+),
+
 
               const SizedBox(height: 25),
 
